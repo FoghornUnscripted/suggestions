@@ -26,17 +26,12 @@
                 <img src="assets/images/logo.svg" alt="Foghorn Unscripted" height="100">
             </div>
 
-            <pre id="api-result"></pre>
-
-            <div class="text-center mt-4 mb-4">
-                <strong>Enter suggestions for the show</strong>
-            </div>
-            <div class="text-center mt-4 mb-4">
-                <strong>Suggestions are currently disabled</strong>
+            <div class="text-center mt-4 mb-4" id="api-result">
+                <i class="fa fa-spinner fa-spin fa-3x" id="spinner"></i>
             </div>
 
             <form method="POST" action="addsuggestion.php">
-                <div class="row mb-4">
+                <div class="row mb-4" id="Section_Person" style="display: none;">
                     <div class="col-12 text-center">
                         <label for="person_input">{{ PersonText }}</label>
                     </div>
@@ -45,7 +40,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-4">
+                <div class="row mb-4" id="Section_TextMessage" style="display: none;">
                     <div class="col-12 text-center">
                         <label for="textmessage_input">{{ TextMessageText }}</label>
                     </div>
@@ -54,7 +49,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-4">
+                <div class="row mb-4" id="Section_Question" style="display: none;">
                     <div class="col-12 text-center">
                         <label for="question_input">{{ QuestionText }}</label>
                     </div>
@@ -63,7 +58,7 @@
                     </div>
                 </div>
 
-                <button type="submit" id="submit_button" class="btn btn-primary btn-block mb-5" disabled>Send Suggestions</button>
+                <button type="submit" id="submit_button" class="btn btn-primary btn-block mb-5" style="display: none;" disabled >Send Suggestions</button>
             </form>
 
         </div>
@@ -93,20 +88,28 @@
         function getAvailableTypes() {
             $.ajax({
                 contentType: 'application/json',
-                data: {
+                data: JSON.stringify({
                     "function": "getAllowedTypes"
-                },
+                }),
                 dataType: 'json',
                 success: function(data){
-                    $('#api-result').text(data);
-                    console.log(data);
+                    for (var i=0; i < data.AllowedTypes.length; i++) {
+                        $('#Section_' + data.AllowedTypes[i]).show(100);
+                    }
+
+                    if (data.AllowedTypes.length > 0) {
+                        $('#api-result').html("<strong>Enter suggestions for the show</strong>");
+                        $('#submit_button').show(100);
+                    } else {
+                        $('#api-result').html("<strong>Suggestions are currently disabled</strong>");
+                    }
                 },
                 error: function(){
                     console.log("API error");
                 },
                 processData: true,
                 type: 'POST',
-                url: 'https://rkhbqa6b0e.execute-api.us-east-1.amazonaws.com/default/SuggesionsJS_Call'
+                url: 'https://zqj23scaic.execute-api.us-east-1.amazonaws.com/default/SuggestionsJS'
             });
         }
 
