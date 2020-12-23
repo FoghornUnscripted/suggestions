@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/site.css" rel="stylesheet" />
+
+    <link rel="shortcut icon" href="assets/images/icons/fav-32.png">
+  	<link rel="icon" href="assets/images/icons/fav-32.png" sizes="32x32" />
+    <link rel="icon" href="assets/images/icons/fav-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="assets/images/icons/fav-180.png" />
+
+    <script>
+        
+    </script>
+
+    <title>Foghorn Unscripted - Suggestions</title>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <div class="text-center mb-3 mt-3">
+                <img src="assets/images/logo.svg" alt="Foghorn Unscripted" height="100">
+            </div>
+
+            <pre id="api-result"></pre>
+
+            <div class="text-center mt-4 mb-4">
+                <strong>Enter suggestions for the show</strong>
+            </div>
+            <div class="text-center mt-4 mb-4">
+                <strong>Suggestions are currently disabled</strong>
+            </div>
+
+            <form method="POST" action="addsuggestion.php">
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <label for="person_input"></label>
+                    </div>
+                    <div class="col-12">
+                        <input class="form-control" name="Person" id="person_input" autocomplete="off" />
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <label for="textmessage_input"></label>
+                    </div>
+                    <div class="col-12">
+                        <textarea class="form-control" name="TextMessage" id="textmessage_input" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <label for="question_input"></label>
+                    </div>
+                    <div class="col-12">
+                        <textarea class="form-control" name="Question" id="question_input" rows="5"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit_button" class="btn btn-primary btn-block mb-5" disabled>Send Suggestions</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+
+    <script>
+        function validateInput() {
+            var enabled = false;
+
+            if ($('#person_input').val().length > 0) enabled = true;
+            if ($('#textmessage_input').val().length > 0) enabled = true;
+            if ($('#question_input').val().length > 0) enabled = true;
+
+            if (enabled) {
+                $('#submit_button').removeAttr('disabled');
+            } else {
+                $('#submit_button').attr('disabled', 'disabled');
+            }
+        }
+
+        function getAvailableTypes() {
+            $.ajax({
+                contentType: 'application/json',
+                data: {
+                    "function": "getAllowedTypes"
+                },
+                dataType: 'json',
+                success: function(data){
+                    $('#api-result').text(data);
+                    console.log(data);
+                },
+                error: function(){
+                    console.log("API error");
+                },
+                processData: true,
+                type: 'POST',
+                url: 'https://rkhbqa6b0e.execute-api.us-east-1.amazonaws.com/default/SuggesionsJS_Call'
+            });
+        }
+
+        $(function() {
+            $('#person_input').change(validateInput);
+            $('#person_input').keyup(validateInput);
+            $('#textmessage_input').change(validateInput);
+            $('#textmessage_input').keyup(validateInput);
+            $('#question_input').change(validateInput);
+            $('#question_input').keyup(validateInput);
+
+            getAvailableTypes();
+        });
+    </script>
+</body>
+</html>
