@@ -1,0 +1,84 @@
+{{ layout default_layout.html }}
+
+<div class="row mt-2">
+    <div class="col-lg-4">
+        <form class="mb-2">
+            <input type="hidden" name="Type" value="1" />
+            <a type="button" href="fh_admin/getsuggestion.html?Type=Person" class="btn btn-primary btn-block typeselect disabled" data-type="Person">
+                <img src="assets/images/person.png" />
+                <h3 class="remaincount invalid" id="remaincount_Person"><i class="fa fa-spinner fa-spin"></i></h3>
+            </a>
+        </form>
+    </div>
+    <div class="col-lg-4">
+        <form class="mb-2">
+            <input type="hidden" name="Type" value="2" />
+            <a type="button" href="fh_admin/getsuggestion.html?Type=TextMessage" class="btn btn-primary btn-block typeselect disabled" data-type="TextMessage">
+                <img src="assets/images/textmessage.png" />
+                <h3 class="remaincount invalid" id="remaincount_TextMessage"><i class="fa fa-spinner fa-spin"></i></h3>
+            </a>
+        </form>
+    </div>
+    <div class="col-lg-4">
+        <form class="mb-2">
+            <input type="hidden" name="Type" value="3" />
+            <a type="button" href="fh_admin/getsuggestion.html?Type=Question" class="btn btn-primary btn-block typeselect disabled" data-type="Question">
+                <img src="assets/images/question.png" />
+                <h3 class="remaincount invalid" id="remaincount_Question"><i class="fa fa-spinner fa-spin"></i></h3>
+            </a>
+        </form>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-12 text-center">
+        <a class="btn btn-primary btn-block" href="fh_admin/index.html">Admin Page</a>
+    </div>
+</div>
+
+{{ section styles }}
+<style>
+    a.typeselect, .type-container {
+        min-height: 120px;
+        position: relative;
+    }
+
+    a .remaincount {
+        position: absolute;
+        top: 5px;
+        left: 10px;
+    }
+
+    a img  {
+        max-width: 55%;
+        padding: 10px;
+    }
+</style>
+{{ endsection }}
+
+{{ section scripts }}
+<script>
+    $(function() {
+        ajaxCall("getSuggestionCounts", null, function(data) {
+            if (data && data.Error) {
+                handleError(data.Error);
+            } else {
+                for (var key in data.CountsPerType) {
+                    if (data.CountsPerType.hasOwnProperty(key)) {
+                        var element = $('#remaincount_' + key);
+                        var count = data.CountsPerType[key];
+                        element.text(count);
+                        element.removeClass('invalid');
+
+                        if(count > 0) {
+                            element.parent().removeClass("disabled");
+                        }
+                    }
+                }
+
+                // Kill the spinner and set the count to 0 for any types we didn't receive counts for.
+                $('.invalid').text("0");
+            }
+        });
+    });
+</script>
+{{ endsection }}

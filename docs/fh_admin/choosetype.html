@@ -14,26 +14,21 @@
 
     
 <style>
-    .w-80
-    {
-        width: 80%;
+    a.typeselect, .type-container {
+        min-height: 120px;
+        position: relative;
     }
 
-    .w-20
-    {
-        width: 20%;
+    a .remaincount {
+        position: absolute;
+        top: 5px;
+        left: 10px;
     }
 
-    button.w-80
-    {
-        border-radius: 0.25rem 0 0 0.25rem;
+    a img  {
+        max-width: 55%;
+        padding: 10px;
     }
-
-    a.w-20
-    {
-        border-radius: 0 0.25rem 0.25rem 0;
-    }
-
 </style>
 
 
@@ -285,72 +280,39 @@
 
             
 
-<div class="text-center mb-3 mt-3">
-    <img src="../assets/images/logo.svg" alt="Foghorn Unscripted" height="100">
+<div class="row mt-2">
+    <div class="col-lg-4">
+        <form class="mb-2">
+            <input type="hidden" name="Type" value="1" />
+            <a type="button" href="../fh_admin/getsuggestion.html?Type=Person" class="btn btn-primary btn-block typeselect disabled" data-type="Person">
+                <img src="../assets/images/person.png" />
+                <h3 class="remaincount invalid" id="remaincount_Person"><i class="fa fa-spinner fa-spin"></i></h3>
+            </a>
+        </form>
+    </div>
+    <div class="col-lg-4">
+        <form class="mb-2">
+            <input type="hidden" name="Type" value="2" />
+            <a type="button" href="../fh_admin/getsuggestion.html?Type=TextMessage" class="btn btn-primary btn-block typeselect disabled" data-type="TextMessage">
+                <img src="../assets/images/textmessage.png" />
+                <h3 class="remaincount invalid" id="remaincount_TextMessage"><i class="fa fa-spinner fa-spin"></i></h3>
+            </a>
+        </form>
+    </div>
+    <div class="col-lg-4">
+        <form class="mb-2">
+            <input type="hidden" name="Type" value="3" />
+            <a type="button" href="../fh_admin/getsuggestion.html?Type=Question" class="btn btn-primary btn-block typeselect disabled" data-type="Question">
+                <img src="../assets/images/question.png" />
+                <h3 class="remaincount invalid" id="remaincount_Question"><i class="fa fa-spinner fa-spin"></i></h3>
+            </a>
+        </form>
+    </div>
 </div>
-
-<div class="mt-5">
-
-    <div class="mb-3">
-        <div class="row mb-1 no-gutters">
-            <div class="col-12">
-                <form class="form-inline" >
-                    <button type="button" class="btn btn-primary w-80 d-flex justify-content-between align-items-center type-allow-toggle" id="type_allow_toggle_Person" data-type="Person" data-state="Invalid">
-                        <span>Person</span>
-                        <i class="fa fa-spin fa-spinner led" id="LED_Person"></i>
-                    </button>
-                    <a href="../fh_admin/getallsuggestions.html?Type=Person" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
-                </form>
-            </div>
-        </div>
-        <div class="row mb-1 no-gutters">
-            <div class="col-12">
-                <form class="form-inline">
-                    <button type="button" class="btn btn-primary w-80 d-flex justify-content-between align-items-center type-allow-toggle" id="type_allow_toggle_TextMessage" data-type="TextMessage" data-state="Invalid">
-                        <span>Text Message</span>
-                        <i class="fa fa-spin fa-spinner led" id="LED_TextMessage"></i>
-                    </button>
-                    <a href="../fh_admin/getallsuggestions.html?Type=TextMessage" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
-                </form>
-            </div>
-        </div>
-        <div class="row no-gutters">
-            <div class="col-12">
-                <form class="form-inline">
-                    <button type="button" class="btn btn-primary w-80 d-flex justify-content-between align-items-center type-allow-toggle" id="type_allow_toggle_Question" data-type="Question" data-state="Invalid">
-                        <span>Question</span>
-                        <i class="fa fa-spin fa-spinner led" id="LED_Question"></i>
-                    </button>
-                    <a href="../fh_admin/getallsuggestions.html?Type=Question" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
-                </form>
-            </div>
-        </div>
+<div class="row mt-2">
+    <div class="col-12 text-center">
+        <a class="btn btn-primary btn-block" href="../fh_admin/index.html">Admin Page</a>
     </div>
-
-    <div class="row mb-5">
-        <div class="col-12">
-            <a href="../fh_admin/choosetype.html" class="btn btn-primary btn-block"><i class="fa fa-arrow-circle-left mr-2"></i>Back to suggestions</a>
-        </div>
-    </div>
-
-    <div class="row mb-2">
-        <div class="col-12">
-            <div class="input-group">
-                <input type="text" name="ShowID" id="show_id_input" class="form-control" />
-                <div class="input-group-append">
-                    <button type="button" id="set_show_id_button" class="btn btn-primary btn-block">Set Show ID</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-2">
-        <div class="col-12">
-            <button class="btn btn-primary btn-block" id="reset_suggestions_button"><i class="fa fa-redo mr-2"></i>Reset suggestions</button>
-        </div>
-    </div>
-
-
 </div>
 
 
@@ -370,73 +332,29 @@
 
     
 <script>
-
     $(function() {
-        ajaxCall("getAllowedTypes", null, function(data) {
+        ajaxCall("getSuggestionCounts", null, function(data) {
             if (data && data.Error) {
                 handleError(data.Error);
             } else {
-                $('.led').removeClass('fa-spinner');
-                $('.led').addClass('fa-circle');
+                for (var key in data.CountsPerType) {
+                    if (data.CountsPerType.hasOwnProperty(key)) {
+                        var element = $('#remaincount_' + key);
+                        var count = data.CountsPerType[key];
+                        element.text(count);
+                        element.removeClass('invalid');
 
-                $('.led').css("color", "#da1919");
-                $('.type-allow-toggle').attr('data-state', 'Disabled');
-
-                for (var i=0; i < data.AllowedTypes.length; i++) {
-                    var suggestionType = data.AllowedTypes[i];
-                    $('#LED_' + suggestionType).css("color", "var(--teal)");
-                    $('#type_allow_toggle_' + suggestionType).attr('data-state', 'Enabled');
+                        if(count > 0) {
+                            element.parent().removeClass("disabled");
+                        }
+                    }
                 }
+
+                // Kill the spinner and set the count to 0 for any types we didn't receive counts for.
+                $('.invalid').text("0");
             }
         });
-
-        ajaxCall("getShowID", null, function(data) {
-            if (data && data.Error) {
-                handleError(data.Error);
-            } else {
-                $('#show_id_input').val(data.ShowID);
-            }
-        });
-
-        $('.type-allow-toggle').click(function(e) {
-            var isEnabled = $(e.target).attr('data-state') == "Enabled";
-            var suggestionType = $(e.target).attr('data-type');
-
-            $('#LED_' + suggestionType).removeClass("fa-circle");
-            $('#LED_' + suggestionType).addClass("fa-spinner");
-            $('#LED_' + suggestionType).css("color", "#fff");
-
-            ajaxCall("setAllowedType", { Type: suggestionType, Enabled: !isEnabled }, function(data) {
-                if (data && data.Error) {
-                    handleError(data.Error);
-                } else {
-                    window.location.reload();
-                }
-            });
-        });
-
-        $('#reset_suggestions_button').click(function() {
-            ajaxCall("resetSuggestions", null, function(data) {
-                if (data && data.Error) {
-                    handleError(data.Error);
-                } else {
-                    window.location.reload();
-                }
-            });
-        });
-
-        $('#set_show_id_button').click(function() {
-            ajaxCall("setShowID", { ShowID: $('#show_id_input').val() }, function(data) {
-                if (data && data.Error) {
-                    handleError(data.Error);
-                } else {
-                    window.location.reload();
-                }
-            });
-        });
-
     });
-
 </script>
 
 

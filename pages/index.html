@@ -5,10 +5,10 @@
 </div>
 
 <div class="text-center mt-4 mb-4" id="api-result">
-    <i class="fa fa-spinner fa-spin fa-3x" id="spinner"></i>
+    <i class="fa fa-spinner fa-spin fa-3x text-danger" id="spinner"></i>
 </div>
 
-<form method="POST" action="addsuggestion.php">
+<form>
     <div class="row mb-4" id="Section_Person" style="display: none;">
         <div class="col-12 text-center">
             <label for="person_input">{{ PersonText }}</label>
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <button type="submit" id="submit_button" class="btn btn-primary btn-block mb-5" style="display: none;" disabled >Send Suggestions</button>
+    <button type="button" id="submit_button" class="btn btn-primary btn-block mb-5" style="display: none;" disabled >Send Suggestions</button>
 </form>
 
 {{ section scripts }}
@@ -73,6 +73,33 @@
                 }
             });
         }
+
+        $('#submit_button').click(function() {
+            var suggestions = [];
+            var personInput = $('#person_input').val();
+            var textMessageInput = $('#textmessage_input').val();
+            var questionInput = $('#question_input').val();
+
+            if (personInput) {
+                suggestions.push({ Type: "Person", Text: personInput });
+            }
+
+            if (textMessageInput) {
+                suggestions.push({ Type: "TextMessage", Text: textMessageInput });
+            }
+
+            if (questionInput) {
+                suggestions.push({ Type: "Question", Text: questionInput });
+            }
+
+            ajaxCall("addSuggestion", { Suggestions: suggestions }, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
+                } else {
+                    window.location.href = "addsuggestion.html"
+                }
+            });
+        });
 
         $(function() {
             $('#person_input').change(validateInput);

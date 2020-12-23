@@ -14,7 +14,7 @@
                         <span>{{ PersonText_Short }}</span>
                         <i class="fa fa-spin fa-spinner led" id="LED_Person"></i>
                     </button>
-                    <a href="getallsuggestions.html?type=Person" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
+                    <a href="fh_admin/getallsuggestions.html?Type=Person" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
                 </form>
             </div>
         </div>
@@ -25,7 +25,7 @@
                         <span>{{ TextMessageText_Short }}</span>
                         <i class="fa fa-spin fa-spinner led" id="LED_TextMessage"></i>
                     </button>
-                    <a href="getallsuggestions.html?type=TextMessage" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
+                    <a href="fh_admin/getallsuggestions.html?Type=TextMessage" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
                 </form>
             </div>
         </div>
@@ -36,7 +36,7 @@
                         <span>{{ QuestionText_Short }}</span>
                         <i class="fa fa-spin fa-spinner led" id="LED_Question"></i>
                     </button>
-                    <a href="getallsuggestions.html?type=Question" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
+                    <a href="fh_admin/getallsuggestions.html?Type=Question" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
                 </form>
             </div>
         </div>
@@ -44,7 +44,7 @@
 
     <div class="row mb-5">
         <div class="col-12">
-            <a href="choosetype.html" class="btn btn-primary btn-block"><i class="fa fa-arrow-circle-left mr-2"></i>Back to suggestions</a>
+            <a href="fh_admin/choosetype.html" class="btn btn-primary btn-block"><i class="fa fa-arrow-circle-left mr-2"></i>Back to suggestions</a>
         </div>
     </div>
 
@@ -61,7 +61,7 @@
 
     <div class="row mb-2">
         <div class="col-12">
-            <a href='#' class="btn btn-primary btn-block" id="reset_suggestions_button"><i class="fa fa-redo mr-2"></i>Reset suggestions</a>
+            <button class="btn btn-primary btn-block" id="reset_suggestions_button"><i class="fa fa-redo mr-2"></i>Reset suggestions</button>
         </div>
     </div>
 
@@ -144,6 +144,8 @@
             ajaxCall("resetSuggestions", null, function(data) {
                 if (data && data.Error) {
                     handleError(data.Error);
+                } else {
+                    window.location.reload();
                 }
             });
         });
