@@ -1,0 +1,164 @@
+{{ layout default_layout.html }}
+
+<div class="text-center mb-3 mt-3">
+    <img src="assets/images/logo.svg" alt="Foghorn Unscripted" height="100">
+</div>
+
+<div class="mt-5">
+
+    <div class="mb-3">
+        <div class="row mb-1 no-gutters">
+            <div class="col-12">
+                <form class="form-inline" >
+                    <button type="button" class="btn btn-primary w-80 d-flex justify-content-between align-items-center type-allow-toggle" id="type_allow_toggle_Person" data-type="Person" data-state="Invalid">
+                        <span>{{ PersonText_Short }}</span>
+                        <i class="fa fa-spin fa-spinner led" id="LED_Person"></i>
+                    </button>
+                    <a href="getallsuggestions.html?type=Person" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
+                </form>
+            </div>
+        </div>
+        <div class="row mb-1 no-gutters">
+            <div class="col-12">
+                <form class="form-inline">
+                    <button type="button" class="btn btn-primary w-80 d-flex justify-content-between align-items-center type-allow-toggle" id="type_allow_toggle_TextMessage" data-type="TextMessage" data-state="Invalid">
+                        <span>{{ TextMessageText_Short }}</span>
+                        <i class="fa fa-spin fa-spinner led" id="LED_TextMessage"></i>
+                    </button>
+                    <a href="getallsuggestions.html?type=TextMessage" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
+                </form>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-12">
+                <form class="form-inline">
+                    <button type="button" class="btn btn-primary w-80 d-flex justify-content-between align-items-center type-allow-toggle" id="type_allow_toggle_Question" data-type="Question" data-state="Invalid">
+                        <span>{{ QuestionText_Short }}</span>
+                        <i class="fa fa-spin fa-spinner led" id="LED_Question"></i>
+                    </button>
+                    <a href="getallsuggestions.html?type=Question" class="btn btn-warning w-20"><i class="fa fa-list"></i></a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <a href="choosetype.html" class="btn btn-primary btn-block"><i class="fa fa-arrow-circle-left mr-2"></i>Back to suggestions</a>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-12">
+            <div class="input-group">
+                <input type="text" name="ShowID" id="show_id_input" class="form-control" />
+                <div class="input-group-append">
+                    <button type="button" id="set_show_id_button" class="btn btn-primary btn-block">Set Show ID</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-12">
+            <a href='#' class="btn btn-primary btn-block" id="reset_suggestions_button"><i class="fa fa-redo mr-2"></i>Reset suggestions</a>
+        </div>
+    </div>
+
+
+</div>
+
+{{ section styles }}
+<style>
+    .w-80
+    {
+        width: 80%;
+    }
+
+    .w-20
+    {
+        width: 20%;
+    }
+
+    button.w-80
+    {
+        border-radius: 0.25rem 0 0 0.25rem;
+    }
+
+    a.w-20
+    {
+        border-radius: 0 0.25rem 0.25rem 0;
+    }
+
+</style>
+{{ endsection }}
+
+{{ section scripts }}
+<script>
+
+    $(function() {
+        ajaxCall("getAllowedTypes", null, function(data) {
+            if (data && data.Error) {
+                handleError(data.Error);
+            } else {
+                $('.led').removeClass('fa-spinner');
+                $('.led').addClass('fa-circle');
+
+                $('.led').css("color", "#da1919");
+                $('.type-allow-toggle').attr('data-state', 'Disabled');
+
+                for (var i=0; i < data.AllowedTypes.length; i++) {
+                    var suggestionType = data.AllowedTypes[i];
+                    $('#LED_' + suggestionType).css("color", "var(--teal)");
+                    $('#type_allow_toggle_' + suggestionType).attr('data-state', 'Enabled');
+                }
+            }
+        });
+
+        ajaxCall("getShowID", null, function(data) {
+            if (data && data.Error) {
+                handleError(data.Error);
+            } else {
+                $('#show_id_input').val(data.ShowID);
+            }
+        });
+
+        $('.type-allow-toggle').click(function(e) {
+            var isEnabled = $(e.target).attr('data-state') == "Enabled";
+            var suggestionType = $(e.target).attr('data-type');
+
+            $('#LED_' + suggestionType).removeClass("fa-circle");
+            $('#LED_' + suggestionType).addClass("fa-spinner");
+            $('#LED_' + suggestionType).css("color", "#fff");
+
+            ajaxCall("setAllowedType", { Type: suggestionType, Enabled: !isEnabled }, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
+
+        $('#reset_suggestions_button').click(function() {
+            ajaxCall("resetSuggestions", null, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
+                }
+            });
+        });
+
+        $('#set_show_id_button').click(function() {
+            ajaxCall("setShowID", { ShowID: $('#show_id_input').val() }, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
+
+    });
+
+</script>
+{{ endsection }}

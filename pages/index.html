@@ -1,75 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/all.min.css" rel="stylesheet">
-    <link href="assets/css/site.css" rel="stylesheet" />
+{{ layout default_layout.html }}
 
-    <link rel="shortcut icon" href="assets/images/icons/fav-32.png">
-  	<link rel="icon" href="assets/images/icons/fav-32.png" sizes="32x32" />
-    <link rel="icon" href="assets/images/icons/fav-192.png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="assets/images/icons/fav-180.png" />
+<div class="text-center mb-3 mt-3">
+    <img src="assets/images/logo.svg" alt="Foghorn Unscripted" height="100">
+</div>
 
-    <script>
-        {{ include-debug live.js }}
-    </script>
+<div class="text-center mt-4 mb-4" id="api-result">
+    <i class="fa fa-spinner fa-spin fa-3x" id="spinner"></i>
+</div>
 
-    <title>Foghorn Unscripted - Suggestions</title>
-</head>
-<body>
-
-    <div class="wrapper">
-        <div class="container">
-            <div class="text-center mb-3 mt-3">
-                <img src="assets/images/logo.svg" alt="Foghorn Unscripted" height="100">
-            </div>
-
-            <div class="text-center mt-4 mb-4" id="api-result">
-                <i class="fa fa-spinner fa-spin fa-3x" id="spinner"></i>
-            </div>
-
-            <form method="POST" action="addsuggestion.php">
-                <div class="row mb-4" id="Section_Person" style="display: none;">
-                    <div class="col-12 text-center">
-                        <label for="person_input">{{ PersonText }}</label>
-                    </div>
-                    <div class="col-12">
-                        <input class="form-control" name="Person" id="person_input" autocomplete="off" />
-                    </div>
-                </div>
-
-                <div class="row mb-4" id="Section_TextMessage" style="display: none;">
-                    <div class="col-12 text-center">
-                        <label for="textmessage_input">{{ TextMessageText }}</label>
-                    </div>
-                    <div class="col-12">
-                        <textarea class="form-control" name="TextMessage" id="textmessage_input" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div class="row mb-4" id="Section_Question" style="display: none;">
-                    <div class="col-12 text-center">
-                        <label for="question_input">{{ QuestionText }}</label>
-                    </div>
-                    <div class="col-12">
-                        <textarea class="form-control" name="Question" id="question_input" rows="5"></textarea>
-                    </div>
-                </div>
-
-                <button type="submit" id="submit_button" class="btn btn-primary btn-block mb-5" style="display: none;" disabled >Send Suggestions</button>
-            </form>
-
+<form method="POST" action="addsuggestion.php">
+    <div class="row mb-4" id="Section_Person" style="display: none;">
+        <div class="col-12 text-center">
+            <label for="person_input">{{ PersonText }}</label>
+        </div>
+        <div class="col-12">
+            <input class="form-control" name="Person" id="person_input" autocomplete="off" />
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
-    <script src="assets/js/popper.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <div class="row mb-4" id="Section_TextMessage" style="display: none;">
+        <div class="col-12 text-center">
+            <label for="textmessage_input">{{ TextMessageText }}</label>
+        </div>
+        <div class="col-12">
+            <textarea class="form-control" name="TextMessage" id="textmessage_input" rows="3"></textarea>
+        </div>
+    </div>
 
+    <div class="row mb-4" id="Section_Question" style="display: none;">
+        <div class="col-12 text-center">
+            <label for="question_input">{{ QuestionText }}</label>
+        </div>
+        <div class="col-12">
+            <textarea class="form-control" name="Question" id="question_input" rows="5"></textarea>
+        </div>
+    </div>
+
+    <button type="submit" id="submit_button" class="btn btn-primary btn-block mb-5" style="display: none;" disabled >Send Suggestions</button>
+</form>
+
+{{ section scripts }}
     <script>
         function validateInput() {
             var enabled = false;
@@ -86,13 +56,10 @@
         }
 
         function getAvailableTypes() {
-            $.ajax({
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    "function": "getAllowedTypes"
-                }),
-                dataType: 'json',
-                success: function(data){
+            ajaxCall("getAllowedTypes", null, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
+                } else {
                     for (var i=0; i < data.AllowedTypes.length; i++) {
                         $('#Section_' + data.AllowedTypes[i]).show(100);
                     }
@@ -103,13 +70,7 @@
                     } else {
                         $('#api-result').html("<strong>Suggestions are currently disabled</strong>");
                     }
-                },
-                error: function(){
-                    console.log("API error");
-                },
-                processData: true,
-                type: 'POST',
-                url: 'https://zqj23scaic.execute-api.us-east-1.amazonaws.com/default/SuggestionsJS'
+                }
             });
         }
 
@@ -124,5 +85,4 @@
             getAvailableTypes();
         });
     </script>
-</body>
-</html>
+{{ endsection }}

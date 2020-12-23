@@ -1,1 +1,7 @@
 $(title) = "Foghorn Unscripted &#8211; Suggestions"
+$(PersonText) = "An fictional person."
+$(PersonText_Short) = "Person"
+$(TextMessageText) = "A text message you sent yesterday."
+$(TextMessageText_Short) = "Text Message"
+$(QuestionText) = "What question would you like to ask the suspect? Please include their name."
+$(QuestionText_Short) = "Question"
