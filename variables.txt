@@ -1,5 +1,5 @@
 $(title) = "Foghorn Unscripted &#8211; Suggestions"
-$(PersonText) = "An fictional person."
+$(PersonText) = "An historic or fictional person."
 $(PersonText_Short) = "Person"
 $(TextMessageText) = "A text message you sent yesterday."
 $(TextMessageText_Short) = "Text Message"
