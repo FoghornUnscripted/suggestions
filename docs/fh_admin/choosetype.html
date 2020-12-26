@@ -280,8 +280,9 @@
 
             
 
-<div class="row mt-2">
-    <div class="col-lg-4">
+<div id="protected_content" class="d-none">
+    <div class="row mt-2">
+        <div class="col-lg-4">
         <form class="mb-2">
             <input type="hidden" name="Type" value="1" />
             <a href="../fh_admin/getsuggestion.html?Type=Person" class="btn btn-primary btn-block typeselect disabled" data-type="Person">
@@ -308,10 +309,11 @@
             </a>
         </form>
     </div>
-</div>
-<div class="row mt-2">
-    <div class="col-12 text-center">
-        <a class="btn btn-primary btn-block" href="../fh_admin/index.html">Admin Page</a>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12 text-center">
+            <a class="btn btn-primary btn-block" href="../fh_admin/index.html">Admin Page</a>
+        </div>
     </div>
 </div>
 
@@ -331,29 +333,33 @@
     <script src="../assets/js/common.js"></script>
 
     
+<script src="../assets/js/auth.js"></script>
 <script>
     $(function() {
-        ajaxCall("getSuggestionCounts", null, function(data) {
-            if (data && data.Error) {
-                handleError(data.Error);
-            } else {
-                for (var key in data.CountsPerType) {
-                    if (data.CountsPerType.hasOwnProperty(key)) {
-                        var element = $('#remaincount_' + key);
-                        var count = data.CountsPerType[key];
-                        element.text(count);
-                        element.removeClass('invalid');
+        if (checkAuth())
+        {
+            ajaxCall("getSuggestionCounts", null, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
+                } else {
+                    for (var key in data.CountsPerType) {
+                        if (data.CountsPerType.hasOwnProperty(key)) {
+                            var element = $('#remaincount_' + key);
+                            var count = data.CountsPerType[key];
+                            element.text(count);
+                            element.removeClass('invalid');
 
-                        if(count > 0) {
-                            element.parent().removeClass("disabled");
+                            if(count > 0) {
+                                element.parent().removeClass("disabled");
+                            }
                         }
                     }
-                }
 
-                // Kill the spinner and set the count to 0 for any types we didn't receive counts for.
-                $('.invalid').text("0");
-            }
-        });
+                    // Kill the spinner and set the count to 0 for any types we didn't receive counts for.
+                    $('.invalid').text("0");
+                }
+            });
+        }
     });
 </script>
 
