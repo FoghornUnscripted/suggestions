@@ -1,10 +1,12 @@
 {{ layout default_layout.html }}
 
-<div class="big-container">
-    <h3 id="suggestion_text"><i class="fa fa-spinner fa-spin text-danger"></i></h3>
-</div>
-<div class="small-container">
-    <a href="fh_admin/choosetype.html" class="btn btn-primary btn-block">Done</a>
+<div id="protected_content" class="d-none">
+    <div class="big-container">
+        <h3 id="suggestion_text"><i class="fa fa-spinner fa-spin text-danger"></i></h3>
+    </div>
+    <div class="small-container">
+        <a href="fh_admin/choosetype.html" class="btn btn-primary btn-block">Done</a>
+    </div>
 </div>
 
 {{ section styles }}
@@ -22,28 +24,29 @@
         align-items: center;
         justify-content: center;
     }
-}
 </style>
 {{ endsection }}
 
 {{ section scripts }}
+<script src="assets/js/auth.js"></script>
 <script>
-
     $(function() {
-        // Get the type from the query string
-        var type = getUrlVar("Type");
+        if (checkAuth()) {
+            // Get the type from the query string
+            var type = getUrlVar("Type");
 
-        ajaxCall("getSuggestion", { Type: type }, function(data) {
-            if (data && data.Error) {
-                handleError(data.Error);
-            } else {
-                if(!data.Suggestion) {
-                    window.location.href = "fh_admin/choosetype.html"
+            ajaxCall("getSuggestion", { Type: type }, function(data) {
+                if (data && data.Error) {
+                    handleError(data.Error);
                 } else {
-                    $('#suggestion_text').text(data.Suggestion.SuggestionText);
+                    if(!data.Suggestion) {
+                        window.location.href = "fh_admin/choosetype.html"
+                    } else {
+                        $('#suggestion_text').text(data.Suggestion.SuggestionText);
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 
 </script>
