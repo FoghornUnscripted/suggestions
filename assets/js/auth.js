@@ -133,7 +133,7 @@ function sha1(str) {
     return temp.toLowerCase()
 }
 
-let passwordHash = "245932108eac0b4a2cd219aa3266e225568ea524";
+let passwordHash = "7bef4fd99b250768d2279a647d79c8565c6471ac";
 
 function checkAuth() {
     if (window.localStorage["suggestions_passwordhash"] != passwordHash) {
